@@ -1,0 +1,57 @@
+analyze_code_quality:
+  description: >
+    Analyze the provided code changes regardless of the programming language. 
+    Evaluate the logic for efficiency, readability , adherence to clean code principles, and maintainability. 
+    Check for universal 'code smells' such as deeply nested loops, redundant logic, 
+    poor variable naming,and identifying technical debt and lack of modularity.
+
+    Code to Review:
+    {code_changes}
+  expected_output: >
+    A valid JSON object with the following schema: 
+    { 
+    'critical_issues': ['an array of high-priority bugs that must be fixed'], 
+    'minor_issues': ['an array of suggested style or performance improvements'], 
+    'reasoning': 'a brief explanation of the overall decision', 
+  name: Analyze Code Quality
+
+review_security:
+  description: >
+    Conduct a deep security audit of the provided code changes.
+    examine code for vulnerabilities, identify security issues, determine risk levels, and decide if issues should block approval.
+    Use the SerperDevTool to find the most relevant security best practices from OWASP
+    and pass the URLs to the ScrapeWebsiteTool to get detailed information.
+
+    please iterate again using this new information
+    Code to Review:
+    {code_changes}
+  expected_output: >
+    A valid JSON object with the following schema: 
+    { 
+    'security_vulnerabilities': ['list of strings describing specific flaws'], 
+    'blocking': true/false, 
+    'highest_risk_level': 'Critical/High/Medium/Low', 
+    'security_recommendations': 'Detailed steps to mitigate the risks' 
+    }
+  name: Review Security
+
+final_review_task:
+  description: >
+    Review the automated quality and security reports to provide a 
+    final decision on the Pull Request. You must reconcile any differences 
+    between the Senior Developer's quality findings and the Security Engineer's 
+    vulnerability audit. Determine if the code is safe for production.
+    determine if the PR can be approved, decide on next steps, explain the decision.
+
+    Code to Review:
+    {code_changes}
+  expected_output: >
+    A conclusive executive summary containing:
+    1. Final Decision (Approved/Changes Required/Escalated)
+    2. List of mandatory changes (if any)
+    3. Justification for the decision based on the quality and security context
+    4. Additional architectural recommendations.
+  context:
+    - analyze_code_quality
+    - review_security
+  name: Review Decision
