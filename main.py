@@ -6,6 +6,8 @@ from pydantic import BaseModel
 import yaml
 from dotenv import load_dotenv
 
+from guardrails import security_review_output_guardrail, review_decision_guardrail 
+
 # This connects your code to the .env file where API is stored
 #
 # # Initialize environment variables
@@ -58,3 +60,53 @@ tech_lead= Agent(
    config=agents_config["tech_lead"]
 )
 
+
+#TASKS
+
+#define the pydantic model for the code quality analysis output
+
+class CodeQualityJSON(BaseModel):
+    critical_issues: list[str]
+    minor_issues: list[str]
+    reasoning: str
+
+#create the quality analysis task
+
+analyse_code_quality = Task(
+    config = tasks_config['analyze_code_quality'],
+    output_json=CodeQualityJSON,
+    agent=senior_developer
+)
+
+#create the Review Security Task
+
+class SecurityVulnerability(BaseModel):
+    description: str
+    risk_level: str
+    evidence: str
+
+#define the pydantic model for the security review output
+
+class ReviewSecurityJSON(BaseModel):
+    security_vulnerabilities:list[SecurityVulnerability]
+    blocking: bool
+    highest_risk:str
+    security_recommendations:list[str]
+
+#Create the security Review class
+
+review_security = Task(
+    config=tasks_config["review_security"],
+    output_json=ReviewSecurityJSON,
+    guardrails=[security_review_output_guardrail],
+    agent=security_engineer
+)
+
+#create the review decision task
+make_review_decision= Task(
+    config=tasks_config["final_review_task"],
+    markdown=True,
+    guardrails=[review_decision_guardrail],
+    context=[analyse_code_quality, review_security],
+    agent=tech_lead
+)
