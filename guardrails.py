@@ -70,6 +70,27 @@ invalid_json = {"highest_risk": "medium",
                     ]
                 }
 # test the guardrail
-security_review_output_guardrail(invalid_json)
+#security_review_output_guardrail(invalid_json)
 
-print(security_review_output_guardrail(invalid_json))
+#print(security_review_output_guardrail(invalid_json))
+
+
+def review_decision_guardrail(output): 
+    try:
+        output= output  if type(output)== str else output.raw 
+    except Exception as e:
+        return(False,("Error retrieving the `raw` argument: "
+                        f"\n{str(e)}\n"
+                        "Make sure you set the raw parameter in the Task."
+                        ) 
+                )
+   #define the keywords to check for in the output
+    keywords=["approve","request changes","escalate"]
+    if not any(keyword in output.lower() for keyword in keywords):
+        error_message = "'Output does not include one of the valid actionable decisions.'"
+        return (False , error_message)
+    return (True, output)
+
+#test guardrail
+#input='Final decision: escalate, Elevate to human'
+#review_decision_guardrail(input)
