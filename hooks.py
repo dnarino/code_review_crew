@@ -10,7 +10,7 @@ def read_file_hook(inputs):
     except Exception as e:
         raise RuntimeError(f"Failed to read file {filename}: {e}")
 
-    inputs["file_content"] = file_contents
+    inputs["code_changes"] = file_contents
 
     return inputs
 

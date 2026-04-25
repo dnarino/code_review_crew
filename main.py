@@ -1,3 +1,4 @@
+from hooks import read_file_hook
 import os
 
 from crewai import LLM, Agent, Crew, Process, Task
@@ -109,4 +110,24 @@ make_review_decision= Task(
     guardrails=[review_decision_guardrail],
     context=[analyse_code_quality, review_security],
     agent=tech_lead
+)
+
+#creating CREW
+
+codeReviewPandilla = Crew(
+    agents=[senior_developer, security_engineer , tech_lead],
+    tasks =[analyse_code_quality,review_security, make_review_decision],
+    memory=True,
+    before_kickoff_callbacks= [read_file_hook]
+)
+
+#kickoff the crew
+
+file_path= 'files/code_changes.txt'
+
+result = codeReviewPandilla.kickoff(
+    inputs={
+        'file_path':file_path,
+        'code_changes':''
+        }
 )

@@ -12,7 +12,7 @@ senior_developer:
     You do not provide mentorship; you provide a list of defects that must be resolved.
   allow_delegation: false
   verbose: true
-  max_iter: 2
+  max_iter: 4
 
 security_engineer:
   role: >
@@ -28,7 +28,7 @@ security_engineer:
     Your reports are factual, technical, and prioritize security over functionality.
   allow_delegation: false
   verbose: true
-  max_iter: 2
+  max_iter: 4
 
 tech_lead:
   role: >
@@ -45,4 +45,4 @@ tech_lead:
     a critical issue, you must issue a 'No-Go' decision.
   allow_delegation: true
   verbose: true
-  max_iter: 2
+  max_iter: 4

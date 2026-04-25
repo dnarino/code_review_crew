@@ -9,7 +9,6 @@ analyze_code_quality:
     {code_changes}
   expected_output: >
     A valid JSON object with the following schema: 
-    { 
     'critical_issues': ['an array of high-priority bugs that must be fixed'], 
     'minor_issues': ['an array of suggested style or performance improvements'], 
     'reasoning': 'a brief explanation of the overall decision', 
@@ -27,30 +26,32 @@ review_security:
     {code_changes}
   expected_output: >
     A valid JSON object with the following schema: 
-    { 
-    'security_vulnerabilities': ['list of strings describing specific flaws'], 
-    'blocking': true/false, 
-    'highest_risk_level': 'Critical/High/Medium/Low', 
-    'security_recommendations': 'Detailed steps to mitigate the risks' 
-    }
+    'security_vulnerabilities' (a list of dictionaries, each with keys: description, risk_level, and evidence), 
+    where possible risk levels are 'low', 'medium', and 'high',
+    'blocking' (boolean indicating if security issues should block approval), 
+    'highest_risk' (the most severe risk level found), and 
+    'security_recommendations' (specific fixes for identified vulnerabilities).
   name: Review Security
 
 final_review_task:
   description: >
-    Review the automated quality and security reports to provide a 
-    final decision on the Pull Request. You must reconcile any differences 
-    between the Senior Developer's quality findings and the Security Engineer's 
-    vulnerability audit. Determine if the code is safe for production.
-    determine if the PR can be approved, decide on next steps, explain the decision.
-
+    1. Based on the results from 'analyze_code_quality' and 'review_security', make a final review decision.
+    2. Decide whether to approve the changes, request changes, or escalate to human review.
+    3. Summarize the key findings from both analyses to support your decision.
+    4. If requesting changes, provide a clear list of what must be fixed.
+    5. If approving, include appropriate comments to accompany the approval.
+    6. If escalating, explain why human review is necessary.
+    7. Include any additional recommendations or observations.
     Code to Review:
     {code_changes}
   expected_output: >
     A conclusive executive summary containing:
-    1. Final Decision (Approved/Changes Required/Escalated)
-    2. List of mandatory changes (if any)
-    3. Justification for the decision based on the quality and security context
-    4. Additional architectural recommendations.
+    A comprehensive review decision that includes: (1) Your final decision (approve, 
+    request changes, or escalate to human review), (2) A summary of the key findings from both analyses, 
+    (3) If requesting changes, a clear list of what must be fixed, (4) If approving, appropriate 
+    comments to include with the approval, (5) If escalating, a clear explanation of why human 
+    review is needed, and (6) Any additional recommendations or observations.
+ 
   context:
     - analyze_code_quality
     - review_security
